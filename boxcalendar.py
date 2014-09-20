@@ -86,6 +86,9 @@ def day(english_year,english_month,english_day):
     chinese_years_days = helper_days_list()
     english_days = datetime.date(english_year,english_month,english_day) - datetime.date(1901,1,1) 
     english_days = english_days.days  #获取输入日期的天数
+    if english_days <50:
+        d49 = day_49(english_year,english_month,english_day)
+        return d49
     chinese_year_list = helper_year_data_find(english_days,chinese_years_days) #获得年位置 [33271, 91, 1992, 16]
     
     change_dict = { '00':29, '01':30, '10':29,'11':30,}
@@ -149,6 +152,7 @@ def day(english_year,english_month,english_day):
     print 'input:[' +f1+ ']; output:[' +f2+ ']; chinese:[' +f3+ ']; birth:[' +f4 +']'
     
     return [f1,f2,f3,f4]
+
 
 
 def helper_days_list():
@@ -240,11 +244,74 @@ def change(chinese_year,chinese_month,chinese_day):
         print [li]
         return [li]
 
+def day_49(english_year,english_month,english_day):
+    english_days = datetime.date(english_year,english_month,english_day) - datetime.date(1901,1,1) 
+    english_days = english_days.days  #获取输入日期的天数
+    chinese_year = '1900'
+    chinese_month = '12' if english_days>18 else '11' 
+    chinese_day = english_days+11 if chinese_month=='11' else english_days-18
+    #print chinese_year +'-' + chinese_month +'-' + str(chinese_day)
+    
+    chinese_year_60 = '0600' if english_days<34 else '0701'  #庚子 '辛丑'
+    chinese_month_60 = u'戊子' if english_days<6 else (u'乙丑' if english_days<34 else u'庚寅' )
+    
+    v4 = datetime.date(english_year,english_month,english_day) - datetime.date(1900,12,17) #日干支
+    v5 = v4.days%60
+    
+    f1 = str(english_year) + '-' +str(english_month) + '-' +str(english_day)
+    f2 =  chinese_year +'-' + chinese_month +'-' + str(chinese_day)
+    a = CHINESE_10_1[int(chinese_year_60[0:2])]+CHINESE_12_1[int(chinese_year_60[2:4])]
+    c = CHINESE_10_1[int(CHINESE_60[v5][0:2])]+CHINESE_12_1[int(CHINESE_60[v5][2:4])]
+    
+    f3 = a  + '-' + chinese_month_60 + '-' + c
+    f4 = f4 = CHINESE_12_2[int(CHINESE_60[v5][2:4])]
+    print 'input:[' +f1+ ']; output:[' +f2+ ']; chinese:[' +f3+ ']; birth:[' +f4 +']'
+    
+    return [f1,f2,f3,f4]
+
+    def helper_verify_year(english_year):
+        errors = 0
+        english_year_error = 0
+        if english_year <1901:
+            errors = errors + 1
+            english_year_error = 1
+        elif english_year >2100:
+            errors = errors + 1
+            english_year_error = 2
+        return [english_year_error,errors]
+
+    def helper_verify_month(english_month):
+        errors = 0
+        english_year_error = 0
+        if english_year <1:
+            errors = errors + 1
+            english_year_error =3
+        elif english_year >12:
+            errors = errors + 1
+            english_year_error = 4
+        return [english_year_error,errors]
+
+    def helper_verify_day_60(english_year,english_month,english_day):
+        pass
+
+    def helper_verify_day(english_year,english_month,english_day):
+        a  = (datetime.date(english_year,english_month,1) - datetime.date(english_year,english_month+1,1)).days
+        errors = 0
+        english_day_error = 0
+        if english_day <1:
+            errors = errors + 1
+            english_day_error =5
+        elif english_day >a:
+            errors = errors + 1
+            english_day_error = 6
+        return [english_day_error,errors]
 
 
 def main():
     a = day(1903,6,28)#闰年
+    c = day(1901,2,4)
     b = change(1903,3,4)
+    #c = day_49(1901,2,3)
 
 
 if __name__ == '__main__':
