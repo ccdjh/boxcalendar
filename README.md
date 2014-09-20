@@ -5,7 +5,7 @@
 
 获取期间难免出现错误，如果使用中出现错误，请提交到我邮箱也可以　ccdjh.marx@gmail.com 
 目的是为大家节省宝贵的时间．
-也提供python版本及源代码给大家．地址:　 https://github.com/ccdjh/boxcalender
+也提供python版本及源代码给大家．地址:　 https://github.com/ccdjh/boxcalendar
 
 根据香港天文台说明：
 
@@ -26,7 +26,7 @@
 
 ```text
 
-pip install boxcalender
+pip install boxcalendar
 
 ```
 
@@ -34,10 +34,10 @@ pip install boxcalender
 
 ```python
 
-from boxcalender import boxcalender
+from boxcalendar import boxcalendar
 
-boxcalender.day(1984,9,11)
-boxcalender.change(1984,9,11)
+boxcalendar.day(1984,9,11)
+boxcalendar.change(1984,9,11)
 
 ```
 
