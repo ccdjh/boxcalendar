@@ -149,7 +149,7 @@ def day(english_year,english_month,english_day):
     f2 = str(chinese_year_list[2]) + '-' + str(chinese_month_list_2) + '-' + str(chinese_month_list[3])
     f3 = CHINESE_10_1[int(year_60_list[chinese_year_list[1]][0:2])]+CHINESE_12_1[int(year_60_list[chinese_year_list[1]][2:4])] + '-' + v2[chinese_month_days_60[1]]+v3[chinese_month_days_60[1]]  + '-' + CHINESE_10_1[int(CHINESE_60[v5][0:2])]+CHINESE_12_1[int(CHINESE_60[v5][2:4])]
     f4 = CHINESE_12_2[int(year_60_list[chinese_year_list[1]][2:4])]
-    print 'input:[' +f1+ ']; output:[' +f2+ ']; chinese:[' +f3+ ']; birth:[' +f4 +']'
+    print u'输入:[' +f1+ u']; 输出:[' +f2+ u']; 天干地支:[' +f3+ u']; 生肖:[' +f4 +']'
     
     return [f1,f2,f3,f4]
 
@@ -265,53 +265,95 @@ def day_49(english_year,english_month,english_day):
     
     f3 = a  + '-' + chinese_month_60 + '-' + c
     f4 = f4 = CHINESE_12_2[int(CHINESE_60[v5][2:4])]
-    print 'input:[' +f1+ ']; output:[' +f2+ ']; chinese:[' +f3+ ']; birth:[' +f4 +']'
+    print u'输入:[' +f1+ u']; 输出:[' +f2+ u']; 天干地支:[' +f3+ u']; 生肖:[' +f4 +']'
     
     return [f1,f2,f3,f4]
 
-    def helper_verify_year(english_year):
-        errors = 0
-        english_year_error = 0
-        if english_year <1901:
-            errors = errors + 1
-            english_year_error = 1
-        elif english_year >2100:
-            errors = errors + 1
-            english_year_error = 2
-        return [english_year_error,errors]
+def helper_verify_year(english_year):
+    errors = 0
+    english_year_error = 0
+    if english_year <1901:
+        errors = errors + 1
+        english_year_error = 1
+    elif english_year >2100:
+        errors = errors + 1
+        english_year_error = 2
+    return [english_year_error,errors]
 
-    def helper_verify_month(english_month):
-        errors = 0
-        english_year_error = 0
-        if english_year <1:
-            errors = errors + 1
-            english_year_error =3
-        elif english_year >12:
-            errors = errors + 1
-            english_year_error = 4
-        return [english_year_error,errors]
+def helper_verify_month(english_month):
+    errors = 0
+    english_year_error = 0
+    if english_year <1:
+        errors = errors + 1
+        english_year_error =3
+    elif english_year >12:
+        errors = errors + 1
+        english_year_error = 4
+    return [english_year_error,errors]
 
-    def helper_verify_day_60(english_year,english_month,english_day):
-        pass
+def helper_verify_day(english_year,english_month,english_day):
+    a  = (datetime.date(english_year,english_month+1,1) - datetime.date(english_year,english_month,1)).days
+    errors = 0
+    english_day_error = 0
+    if english_day <1:
+        errors = errors + 1
+        english_day_error =5
+    elif english_day >a:
+        errors = errors + 1
+        english_day_error = 6
+    return [english_day_error,errors]
 
-    def helper_verify_day(english_year,english_month,english_day):
-        a  = (datetime.date(english_year,english_month,1) - datetime.date(english_year,english_month+1,1)).days
-        errors = 0
-        english_day_error = 0
-        if english_day <1:
+def helper_verify_day_60(chinese_year,chinese_month,chinese_day):
+    errors = 0
+    chinese_day_error = 0
+    
+    CHANGE_MONTHS = { '00':29, '01':30, '10':29,'11':30,}
+    english_month_days = CHINESE_1990_2100[chinese_year-1901]
+    #print english_month_days 
+    a = bin(english_month_days)
+    b = [ a[i:i+2] for i in range(0, len(a),2)][2:]
+    #print b
+    b_len= len(b)
+    if b_len == 13:
+        r = [ (i,b.index(i))  for i in b if i=='10' or i=='11'] #判断那个月是闰月
+        c = [ CHANGE_MONTHS[x] if x in CHANGE_MONTHS else x for x in b]
+        #d = [ sum(c[0:i]) for i in range(len(c))]
+        e = None
+        if chinese_month<r[0][1]:
+            e = c[chinese_month-1]
+        elif chinese_month>r[0][1]:
+            e = c[chinese_month]
+        else:
+            e1 = c[chinese_month-1]
+            e2 = c[chinese_month]
+            e = max([e1,e2])
+            
+        #print e
+        if chinese_day <1:
             errors = errors + 1
-            english_day_error =5
-        elif english_day >a:
+            chinese_day_error =5
+        elif chinese_day >e:
             errors = errors + 1
-            english_day_error = 6
-        return [english_day_error,errors]
-
+            chinese_day_error = 6
+        return [chinese_day_error,errors]
+            
+    else:
+        c = [ CHANGE_MONTHS[x] if x in CHANGE_MONTHS else x for x in b]
+        e = c[chinese_month-1]
+        if chinese_day <1:
+            errors = errors + 1
+            chinese_day_error =5
+        elif chinese_day >e:
+            errors = errors + 1
+            chinese_day_error = 6
+        return [chinese_day_error,errors]
+        
 
 def main():
-    a = day(1903,6,28)#闰年
+    #a = day(1903,6,28)#闰年
     c = day(1901,2,4)
-    b = change(1903,3,4)
-    #c = day_49(1901,2,3)
+    #b = change(1903,3,4)
+    #d = helper_verify_day_60(1984,10,11)
 
 
 if __name__ == '__main__':
